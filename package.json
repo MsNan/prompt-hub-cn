@@ -1,12 +1,28 @@
 {
   "name": "prompt-hub-cn",
+  "version": "0.2.0",
+  "description": "66 条原创中文提示词与 AI Agent 模板；一行命令导出 Cursor rules / Claude skills",
+  "license": "MIT",
   "private": true,
   "type": "module",
+  "bin": {
+    "prompt-hub-cn": "scripts/export.js"
+  },
+  "files": [
+    "scripts/export.js",
+    "src/files.js",
+    "src/data"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "node scripts/check.js"
+    "check": "node scripts/check.js",
+    "test": "node --test",
+    "export": "node scripts/export.js"
   },
   "dependencies": {
     "vue": "^3.5.44"

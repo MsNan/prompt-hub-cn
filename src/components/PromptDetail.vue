@@ -20,8 +20,12 @@
     <section>
       <div class="prompt-head">
         <h2>提示词</h2>
-        <button class="btn primary" @click="doCopy">{{ copied ? '✅ 已复制' : '📋 一键复制' }}</button>
+        <div class="actions">
+          <button v-if="file" class="btn" @click="download">⬇️ 下载 {{ file.filename }}</button>
+          <button class="btn primary" @click="doCopy">{{ copied ? '✅ 已复制' : '📋 一键复制' }}</button>
+        </div>
       </div>
+      <p v-if="file" class="save-to">放到项目里的 <code>{{ file.path }}</code>。一次导出全部：<code>npx -y github:MsNan/prompt-hub-cn {{ p.cat === 'Cursor rules' ? '--only rules' : '--only skills' }} .</code></p>
       <pre class="prompt" v-html="highlighted" />
     </section>
     <section><h2>示例</h2><p class="example">{{ p.example }}</p></section>
@@ -31,16 +35,25 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { CAT_ICON } from '../data/index.js'
 import { copyText } from '../copy.js'
+import { fileFor, fillVars } from '../files.js'
 const props = defineProps({ p: { type: Object, required: true }, fav: Boolean })
 defineEmits(['fav', 'tag'])
 const values = reactive({})
 watch(() => props.p.id, () => { for (const k of Object.keys(values)) delete values[k] }, { immediate: true })
 const isLong = (v) => /代码|diff|报错|记录|内容|反馈|简历|JD|原文|方案|大纲|log|评论|全文|问答|表结构|指标|体积/.test(v)
-const filled = computed(() => props.p.prompt.replace(/{{(.+?)}}/g, (m, k) => (values[k]?.trim() ? values[k] : m)))
+const filled = computed(() => fillVars(props.p.prompt, values))
+const file = computed(() => fileFor(props.p))
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
 const highlighted = computed(() => esc(filled.value).replace(/{{(.+?)}}/g, '<span class="var">{{$1}}</span>'))
 const copied = ref(false)
 async function doCopy() { if (await copyText(filled.value)) { copied.value = true; setTimeout(() => (copied.value = false), 1500) } }
+function download() {
+  const text = filled.value.endsWith('\n') ? filled.value : filled.value + '\n'
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }))
+  const a = Object.assign(document.createElement('a'), { href: url, download: file.value.filename })
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
 </script>
 <style scoped>
 .detail { max-width: 820px; margin: 0 auto; padding: 24px 0; }
@@ -57,6 +70,8 @@ h2 small { font-weight: normal; color: var(--muted); font-size: 13px; }
 .vars textarea { resize: vertical; }
 .prompt-head { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
 .prompt-head h2 { margin: 0; }
-.prompt-head + .prompt { margin-top: 10px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.save-to { color: var(--muted); font-size: 13px; margin: 8px 0 0; word-break: break-all; }
+.prompt-head + .prompt, .save-to + .prompt { margin-top: 10px; }
 .example { background: var(--brand-soft); border-radius: 10px; padding: 12px 14px; margin: 0; }
 </style>

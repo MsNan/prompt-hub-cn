@@ -6,7 +6,7 @@
 
 [在线使用](https://msnan.github.io/prompt-hub-cn/) · [贡献一条](CONTRIBUTING.md)
 
-![license](https://img.shields.io/badge/license-MIT-green) ![prompts](https://img.shields.io/badge/prompts-66-blue) ![categories](https://img.shields.io/badge/categories-11-orange)
+![license](https://img.shields.io/badge/license-MIT-green) ![prompts](https://img.shields.io/badge/prompts-66-blue) ![categories](https://img.shields.io/badge/categories-11-orange) [![test](https://github.com/MsNan/prompt-hub-cn/actions/workflows/test.yml/badge.svg)](https://github.com/MsNan/prompt-hub-cn/actions/workflows/test.yml)
 
 </div>
 
@@ -18,7 +18,28 @@
 - **填变量**：详情页里填好变量，复制出来就是可以直接发给 AI 的完整提示词
 - **搜索、分类、标签**：支持多关键词搜索，覆盖标题、场景、标签和提示词正文
 - **收藏**：收藏只保存在你的浏览器本地（localStorage），不需要登录
+- **规则和技能直接下载**：Cursor rules、Claude skills 两类在详情页可以下载成 `.mdc` / `SKILL.md`，也可以一行命令全部导出到项目里
 - **深色模式**、适配手机，纯静态网站，部署在 GitHub Pages
+
+## 一行命令导出 Cursor rules / Claude skills
+
+在你的项目根目录运行（需要 Node 20+）：
+
+```bash
+# 6 条 Cursor rules → .cursor/rules/*.mdc，6 个 Claude skills → .claude/skills/<name>/SKILL.md
+npx -y github:MsNan/prompt-hub-cn .
+
+# 只要其中一类，并顺手把 {{变量}} 填好
+npx -y github:MsNan/prompt-hub-cn . --only rules --set "UI 库=Element Plus" --set "测试框架=Vitest"
+```
+
+- 已存在的文件默认跳过，不会覆盖你自己改过的规则；确认要覆盖时加 `--force`
+- 没有用 `--set` 填的变量会原样保留，命令结束时会列出每个文件还需要填写哪些变量
+- 克隆仓库后也可以用 `npm run export -- <项目目录>`
+
+### Export Cursor rules / Claude skills (English)
+
+Run `npx -y github:MsNan/prompt-hub-cn <project-dir>` to write the 6 Cursor rules to `.cursor/rules/*.mdc` and the 6 Claude skills to `.claude/skills/<name>/SKILL.md`. Use `--only rules|skills` to pick one kind, `--set "var=value"` to fill `{{placeholders}}`, and `--force` to overwrite existing files (skipped by default). The prompt text itself is in Chinese.
 
 ## 分类
 
@@ -47,11 +68,12 @@ git clone https://github.com/MsNan/prompt-hub-cn.git
 cd prompt-hub-cn
 npm install
 npm run dev      # 本地预览
-npm run check    # 校验数据格式
+npm run check    # 校验数据格式（变量、分类、rule/skill 的 frontmatter）
+npm test         # 运行单元测试
 npm run build    # 构建静态站点
 ```
 
-推送到 `main` 分支后，GitHub Actions 会自动部署到 GitHub Pages。
+每次推送和 PR 都会在 Node 20 / 22 上跑校验、测试和构建；推送到 `main` 分支后，GitHub Actions 会自动部署到 GitHub Pages。
 
 ## 贡献
 

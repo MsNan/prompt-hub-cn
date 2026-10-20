@@ -17,7 +17,8 @@
    ```bash
    npm install
    # 在 src/data/p1.js ~ p3.js 中，按分类追加一条
-   npm run check   # 校验 id 唯一、分类合法、变量一致
+   npm run check   # 校验 id 唯一、分类合法、变量一致，以及 rule/skill 的 frontmatter
+   npm test        # 单元测试（含导出命令）
    npm run dev     # 本地预览
    ```
 
