@@ -70,7 +70,7 @@ npm install
 npm run dev      # 本地预览
 npm run check    # 校验数据格式（变量、分类、rule/skill 的 frontmatter）
 npm test         # 运行单元测试
-npm run build    # 构建静态站点
+npm run build:site    # 构建静态站点
 ```
 
 每次推送和 PR 都会在 Node 20 / 22 上跑校验、测试和构建；推送到 `main` 分支后，GitHub Actions 会自动部署到 GitHub Pages。
